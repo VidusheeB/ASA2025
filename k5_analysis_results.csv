@@ -1,0 +1,6 @@
+fold,accuracy,correct,left_to_right,right_to_left,total,correct_proportion,left_to_right_proportion,right_to_left_proportion
+1,0.5,21,17,12,50,0.42,0.34,0.24
+2,0.5,21,17,12,50,0.42,0.34,0.24
+3,0.6,21,17,12,50,0.42,0.34,0.24
+4,0.3,21,17,12,50,0.42,0.34,0.24
+5,0.2,21,17,12,50,0.42,0.34,0.24

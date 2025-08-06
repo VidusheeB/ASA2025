@@ -3,16 +3,16 @@ import numpy as np
 import pickle
 import os
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, r2_score
 import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend to prevent pop-ups
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 class ModelTrainer:
-    def __init__(self, data_path='Scores.csv'):
+    def __init__(self, data_path='Scores_100.csv'):
         self.data_path = data_path
         self.model = None
         self.scaler = StandardScaler()
@@ -42,19 +42,24 @@ class ModelTrainer:
             X, y, test_size=test_size, random_state=random_state, stratify=y
         )
         
-        # Scale features
-        X_train_scaled = self.scaler.fit_transform(X_train)
-        X_test_scaled = self.scaler.transform(X_test)
-        
         print(f"Training set size: {X_train.shape[0]}")
         print(f"Test set size: {X_test.shape[0]}")
         
-        return X_train_scaled, X_test_scaled, y_train, y_test
+        return X_train, X_test, y_train, y_test
     
     def train_model(self, X_train, y_train):
         """Train the logistic regression model"""
         print("Training logistic regression model...")
         
+        # Store training data for cross-validation
+        self.X_train = X_train
+        self.y_train = y_train
+        
+        # Scale features
+        self.scaler = StandardScaler()
+        X_train_scaled = self.scaler.fit_transform(X_train)
+        
+        # Train model
         self.model = LogisticRegression(
             random_state=42, 
             max_iter=1000,
@@ -62,7 +67,7 @@ class ModelTrainer:
             class_weight='balanced'
         )
         
-        self.model.fit(X_train, y_train)
+        self.model.fit(X_train_scaled, y_train)
         print("Model training completed!")
         
     def evaluate_model(self, X_test, y_test):
@@ -70,17 +75,30 @@ class ModelTrainer:
         if self.model is None:
             raise ValueError("Model must be trained before evaluation")
         
-        # Make predictions
-        y_pred = self.model.predict(X_test)
-        y_pred_proba = self.model.predict_proba(X_test)
+        # Scale test data
+        X_test_scaled = self.scaler.transform(X_test)
+        
+        # Make predictions with optimal threshold
+        y_pred_proba = self.model.predict_proba(X_test_scaled)
+        y_pred = (y_pred_proba[:, 1] >= 0.2).astype(int)  # Use optimal threshold of 0.2
         
         # Calculate metrics
         accuracy = accuracy_score(y_test, y_pred)
         
+        # Calculate cross-validation scores
+        cv_folds = min(3, len(self.X_train) // 2)  # Adjust for small dataset
+        X_train_scaled = self.scaler.transform(self.X_train)
+        cv_accuracy = cross_val_score(self.model, X_train_scaled, self.y_train, 
+                                     cv=cv_folds, scoring='accuracy')
+        cv_r2 = cross_val_score(self.model, X_train_scaled, self.y_train, 
+                               cv=cv_folds, scoring='r2')
+        
         print("=" * 50)
         print("MODEL EVALUATION")
         print("=" * 50)
-        print(f"Accuracy: {accuracy:.4f}")
+        print(f"Test Accuracy: {accuracy:.4f}")
+        print(f"Cross-validation Accuracy: {cv_accuracy.mean():.4f} (+/- {cv_accuracy.std() * 2:.4f})")
+        print(f"Cross-validation R²: {cv_r2.mean():.4f} (+/- {cv_r2.std() * 2:.4f})")
         
         print("\nClassification Report:")
         print(classification_report(y_test, y_pred, 
@@ -89,6 +107,10 @@ class ModelTrainer:
         # Store metrics
         self.training_metrics = {
             'accuracy': accuracy,
+            'cv_accuracy': cv_accuracy.mean(),
+            'cv_accuracy_std': cv_accuracy.std(),
+            'cv_r2': cv_r2.mean(),
+            'cv_r2_std': cv_r2.std(),
             'predictions': y_pred,
             'probabilities': y_pred_proba,
             'confusion_matrix': confusion_matrix(y_test, y_pred)

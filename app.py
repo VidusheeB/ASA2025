@@ -89,10 +89,10 @@ class PoliticalLeaningClassifier:
         # Scale features
         features_scaled = self.scaler.transform([features])
         
-        # Make prediction
+        # Make prediction with optimal threshold
         if hasattr(self.model, 'predict') and hasattr(self.model, 'predict_proba'):
-            prediction = self.model.predict(features_scaled)[0]
             probability = self.model.predict_proba(features_scaled)[0]
+            prediction = 1 if probability[1] >= 0.2 else 0  # Use optimal threshold of 0.2
         else:
             raise ValueError("Model does not have required predict methods")
         
