@@ -31,10 +31,31 @@ A fine-tuned ChatGPT model for political leaning classification based on TF-IDF 
    ```
 
 3. **Set up environment variables**:
+   
+   **Option A: Using .env file (recommended for local development)**
+   ```bash
+   # Copy the example file
+   cp env_example.txt .env
+   
+   # Edit .env with your actual values
+   OPENAI_API_KEY=your_openai_api_key_here
+   FINE_TUNED_MODEL_NAME=ft:your_model_name_here
+   ```
+   
+   **Option B: Using environment variables**
    ```bash
    export OPENAI_API_KEY="your-openai-api-key"
-   export FINE_TUNED_MODEL_NAME="ft:gpt-4.1:your-model-id"  # Required
+   export FINE_TUNED_MODEL_NAME="ft:your-model-name"
    ```
+   
+   **Option C: Using setup script**
+   ```bash
+   python setup_config.py
+   ```
+   
+   **For Streamlit Cloud deployment:**
+   - Add secrets in your Streamlit Cloud dashboard
+   - Use the format shown in `env_example.txt`
 
 ## 🎯 Usage
 

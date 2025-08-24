@@ -1,0 +1,7 @@
+# OpenAI API Configuration
+# Replace with your actual OpenAI API key
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Fine-tuned Model Configuration
+# Replace with your actual fine-tuned model name
+FINE_TUNED_MODEL_NAME=ft:your_model_name_here
