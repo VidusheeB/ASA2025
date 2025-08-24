@@ -201,7 +201,7 @@ def main():
     print("=" * 60)
     
     # Initialize trainer
-    trainer = ModelTrainer('Scores.csv')
+    trainer = ModelTrainer('data/Scores.csv')
     
     # Load data
     X, y = trainer.load_data()
