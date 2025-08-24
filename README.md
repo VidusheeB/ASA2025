@@ -1,183 +1,221 @@
-# Political Leaning Classifier
+# 🏛️ Political Leaning Classifier
 
-A machine learning system that classifies political leaning (left vs right) of articles based on TF-IDF features using logistic regression.
+A fine-tuned ChatGPT model for political leaning classification based on TF-IDF scores of political terms.
 
-## Overview
+## 🚀 Features
 
-This project provides:
-- **Model Training**: Train logistic regression on TF-IDF features
-- **Prediction**: Classify new articles as left or right-leaning
-- **Web Interface**: Streamlit app for easy upload and prediction
-- **PDF Support**: Upload PDF documents for analysis
+- **Fine-tuned ChatGPT Model**: Uses OpenAI's fine-tuning API for political leaning classification
+- **Interactive Web UI**: Beautiful Streamlit interface for easy interaction
+- **K-Fold Cross-Validation**: Comprehensive evaluation with confusion matrices and metrics
+- **Batch Processing**: Upload CSV files for bulk analysis
+- **Real-time Analysis**: Single article classification with confidence scores
+- **Detailed Metrics**: Accuracy, precision, recall, F1-score, specificity, and sensitivity
 
-## Quick Start
+## 📋 Requirements
 
-### 1. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
+- Python 3.8+
+- OpenAI API key
+- Fine-tuned model name (required)
 
-### 2. Train the Model
-```bash
-python train_model.py
-```
-This will:
-- Load the `Scores.csv` data
-- Train a logistic regression model
-- Save the model to `models/political_classifier.pkl`
-- Save feature importance to `models/political_classifier_importance.csv`
+## 🛠️ Installation
 
-### 3. Make Predictions
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd ASA2025
+   ```
 
-#### Option A: Command Line
-```bash
-# Predict from text
-python predict.py --text "Your article text here"
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-# Predict from file
-python predict.py --file article.txt
+3. **Set up environment variables**:
+   ```bash
+   export OPENAI_API_KEY="your-openai-api-key"
+   export FINE_TUNED_MODEL_NAME="ft:gpt-4.1:your-model-id"  # Required
+   ```
 
-# Interactive mode
-python predict.py --interactive
-```
+## 🎯 Usage
 
-#### Option B: Web Interface
+### Web Interface
+
+Run the Streamlit web application:
+
 ```bash
 streamlit run app.py
 ```
-Then:
-1. Upload a PDF or text file
-2. Or paste text directly
-3. Click "Predict Political Leaning"
-4. View results and feature analysis
 
-#### Option C: Python API
-```python
-from predict import predict_from_text
+The web interface provides:
+- **Single Prediction**: Input TF-IDF scores for individual articles
+- **Batch Analysis**: Upload CSV files for bulk classification
+- **K-Fold Evaluation**: Run cross-validation on training data
+- **Model Information**: Configuration status and model details
 
-prediction, probability, features, analysis = predict_from_text("Your article text")
+### Command Line K-Fold Evaluation
+
+Run comprehensive evaluation from command line:
+
+```bash
+python run_kfold_evaluation.py
 ```
 
-## File Structure
+This will:
+- Load training data from `political_leaning_training.jsonl`
+- Perform K-fold cross-validation
+- Generate confusion matrices and performance plots
+- Save detailed results to CSV files
+
+## 📊 Model Architecture
+
+### Input Format
+The model expects TF-IDF scores for 24 political terms:
+- Scrutiny, hostile attitudes, national security, political activism
+- privilege, authoritarianism, suppression, disinformation
+- unlawful, vetting, inhumane conditions, rights violations
+- deportation, denaturalization, fraud, abuse, exploitation
+- fear, misinformation, cruelty, unconstitutional, terror network, chaos
+
+### Output
+- **Prediction**: "left-leaning" or "right-leaning"
+- **Confidence**: Score between 0.0 and 1.0
+
+### Training Data Format
+The model was trained on JSONL format with messages:
+```json
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a political leaning classifier..."
+    },
+    {
+      "role": "user", 
+      "content": "TF-IDF scores: {...}"
+    },
+    {
+      "role": "assistant",
+      "content": "This article is left-leaning."
+    }
+  ]
+}
+```
+
+## 📈 Evaluation Metrics
+
+The system provides comprehensive evaluation metrics:
+
+- **Accuracy**: Overall classification accuracy
+- **Precision**: True positives / (True positives + False positives)
+- **Recall**: True positives / (True positives + False negatives)
+- **F1-Score**: Harmonic mean of precision and recall
+- **Specificity**: True negatives / (True negatives + False positives)
+- **Sensitivity**: True positives / (True positives + False negatives)
+
+## 📁 File Structure
 
 ```
 ASA2025/
-├── Scores.csv                    # Training data (TF-IDF scores + labels)
-├── train_model.py               # Model training script
-├── predict.py                   # Prediction script
-├── app.py                     # Web interface
-├── test_prediction.py          # Test script
-├── usage_example.py            # Usage examples
-├── requirements.txt             # Python dependencies
-├── README.md                   # This file
-└── models/                     # Saved models (created after training)
-    ├── political_classifier.pkl
-    └── political_classifier_importance.csv
+├── app.py                          # Streamlit web application
+├── fine_tuned_classifier.py        # Core classifier class
+├── kfold_evaluator.py             # K-fold evaluation system
+├── run_kfold_evaluation.py        # Command line evaluation script
+├── political_leaning_training.jsonl # Training data
+├── requirements.txt                # Python dependencies
+└── README.md                      # This file
 ```
 
-## Data Format
+## 🔧 Configuration
 
-### Training Data (`Scores.csv`)
-- **Label column**: Binary political leaning (0=left, 1=right)
-- **Feature columns**: TF-IDF scores for vocabulary words
-- **Features include**: immigration terms, legal terms, administrative terms
+### Environment Variables
 
-### Example Features
-- Immigration: `asylum`, `border security`, `deportation plans`
-- Legal: `constitutional rights`, `lawsuits`, `ACLU`
-- Administrative: `Trump administration`, `executive order`
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `OPENAI_API_KEY` | Your OpenAI API key | Yes |
+| `FINE_TUNED_MODEL_NAME` | Fine-tuned model name | Yes |
 
-## Model Performance
+### Model Configuration
 
-With the current dataset (8 samples):
-- **Accuracy**: 50% (limited by small dataset)
-- **Top Features**: 
-  - Right-leaning: `deportation plans`, `Trump administration`, `sanctuary policies`
-  - Left-leaning: `racial profiling`, `immigration law`, `border security`
+The system requires a fine-tuned model:
 
-## Usage Examples
+- **Fine-tuned Model**: Set `FINE_TUNED_MODEL_NAME` to your model ID
+- **No Fallback**: The system will fail if no fine-tuned model is specified
 
-### Test Predictions
-```bash
-python test_prediction.py
-```
+## 📊 Output Files
 
-### Web Interface Features
-1. **Analysis Dashboard**: View model performance and feature importance
-2. **Article Predictor**: Upload PDFs or paste text for prediction
-3. **Feature Analysis**: See which terms influenced the prediction
-4. **Visualization**: Charts showing prediction probabilities and feature contributions
+When running K-fold evaluation, the system generates:
 
-### Supported File Types
-- **PDF**: Upload PDF documents (text extraction)
-- **TXT**: Plain text files
-- **CSV**: Files with text in first column or 'text' column
+- `kfold_results.csv`: Detailed fold-wise and overall metrics
+- `kfold_confusion_matrix.png`: Confusion matrix visualization
+- `kfold_performance.png`: Fold-wise performance comparison
 
-## API Usage
+## 🎨 Web Interface Features
 
-```python
-from predict import predict_from_text
+### Single Prediction
+- Interactive TF-IDF score input
+- Real-time classification with confidence scores
+- Visual representation of key political terms
+- Sample data loading for testing
 
-# Make prediction
-prediction, probability, features, analysis = predict_from_text(
-    "The Trump administration has announced new deportation plans..."
-)
+### Batch Analysis
+- CSV file upload for bulk processing
+- Progress tracking during classification
+- Summary statistics and downloadable results
+- Error handling and validation
 
-# Interpret results
-if prediction == 0:
-    print("LEFT-LEANING")
-else:
-    print("RIGHT-LEANING")
+### K-Fold Evaluation
+- Configurable number of folds (3, 5, 10)
+- Real-time progress tracking
+- Interactive visualizations with Plotly
+- Comprehensive metrics display
 
-print(f"Confidence: {max(probability):.3f}")
-```
-
-## Model Interpretation
-
-### Positive Coefficients (Right-leaning indicators)
-- Terms that predict right-leaning when present
-- Examples: `deportation plans`, `Trump administration`, `sanctuary policies`
-
-### Negative Coefficients (Left-leaning indicators)
-- Terms that predict left-leaning when present
-- Examples: `racial profiling`, `immigration law`, `constitutional rights`
-
-## Troubleshooting
+## 🔍 Troubleshooting
 
 ### Common Issues
 
-1. **"Model file not found"**
-   - Run `python train_model.py` first
+1. **API Key Error**:
+   ```
+   Error: OpenAI API key not found
+   ```
+   Solution: Set the `OPENAI_API_KEY` environment variable
 
-2. **"No significant features detected"**
-   - Article may not contain relevant political vocabulary
-   - Try longer articles with more political content
+2. **Model Not Found**:
+   ```
+   Error: Fine-tuned model name not provided
+   ```
+   Solution: Set `FINE_TUNED_MODEL_NAME` - this is required for the system to work
 
-3. **Low confidence predictions**
-   - Normal for small training dataset
-   - Consider expanding training data
+3. **Training Data Missing**:
+   ```
+   Error: Training data file not found
+   ```
+   Solution: Ensure `political_leaning_training.jsonl` is in the current directory
 
-4. **PDF extraction issues**
-   - Ensure PDF contains extractable text (not scanned images)
-   - Try copying text manually if extraction fails
+### Performance Tips
 
-## Dependencies
+- Use batch processing for large datasets to minimize API calls
+- Set appropriate temperature (0.1) for consistent results
+- Monitor API rate limits during evaluation
+- Use the command line script for automated evaluation
 
-- `pandas`: Data manipulation
-- `numpy`: Numerical computing
-- `scikit-learn`: Machine learning
-- `matplotlib`: Plotting
-- `seaborn`: Statistical visualizations
-- `streamlit`: Web interface
-- `PyPDF2`: PDF text extraction
+## 🤝 Contributing
 
-## Next Steps
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-1. **Expand Dataset**: Add more training articles for better performance
-2. **Feature Engineering**: Add more political vocabulary
-3. **Model Tuning**: Experiment with different algorithms
-4. **Validation**: Test on larger, more diverse datasets
+## 📄 License
 
-## License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-This project is for educational and research purposes.
+## 🙏 Acknowledgments
+
+- OpenAI for the fine-tuning API
+- Streamlit for the web framework
+- The political science community for research insights
+
+---
+
+**Note**: This system is designed for research and educational purposes. Always ensure compliance with OpenAI's usage policies and ethical guidelines when analyzing political content.

@@ -1,0 +1,23 @@
+{
+  "5_fold": {
+    "accuracy": 0.9428571428571428,
+    "specificity": 0.9428571428571428,
+    "sensitivity": 0.9428571428571428,
+    "r2_score": 0.7714285714285715,
+    "n_samples": 70
+  },
+  "10_fold": {
+    "accuracy": 0.9428571428571428,
+    "specificity": 0.9428571428571428,
+    "sensitivity": 0.9428571428571428,
+    "r2_score": 0.7714285714285715,
+    "n_samples": 70
+  },
+  "leave_one_out": {
+    "accuracy": 0.9571428571428572,
+    "specificity": 0.9714285714285714,
+    "sensitivity": 0.9428571428571428,
+    "r2_score": 0.8285714285714285,
+    "n_samples": 70
+  }
+}
