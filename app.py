@@ -220,13 +220,7 @@ def show_single_prediction(classifier, document_processor):
                            orientation='h', title="Top Political Terms")
                 st.plotly_chart(fig, use_container_width=True)
             
-            # Show analysis summary
-            st.subheader("📊 Analysis Summary")
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Terms Found", analysis.get('total_terms_found', 0))
-            with col2:
-                st.metric("Max Score", f"{analysis.get('max_score', 0):.3f}")
+
 
     else:
         st.info("Upload a document or enter text, then click 'Classify' to see results.")
@@ -645,11 +639,6 @@ def show_results_page():
     st.header("📊 Comprehensive Evaluation Results")
     st.markdown("### Real Articles Political Leaning Classifier Performance")
     
-    # Model information
-    st.subheader("🤖 Model Information")
-    model_name = st.secrets.get("FINE_TUNED_MODEL_NAME", os.getenv("FINE_TUNED_MODEL_NAME"))
-    st.info(f"**Model Used:** {model_name}")
-    
     # Initialize classifier
     classifier = initialize_classifier()
     if classifier is None:
@@ -672,7 +661,7 @@ def show_results_page():
         with col1:
             st.write("**5-Fold Cross-Validation**")
             try:
-                st.image('confusion_matrix_5fold.png', use_column_width=True)
+                st.image('confusion_matrix_5fold.png', use_container_width=True)
             except:
                 st.error("5-fold confusion matrix image not found")
             
@@ -686,7 +675,7 @@ def show_results_page():
         with col2:
             st.write("**10-Fold Cross-Validation**")
             try:
-                st.image('confusion_matrix_10fold.png', use_column_width=True)
+                st.image('confusion_matrix_10fold.png', use_container_width=True)
             except:
                 st.error("10-fold confusion matrix image not found")
             
@@ -700,7 +689,7 @@ def show_results_page():
         with col3:
             st.write("**Leave-One-Out Cross-Validation**")
             try:
-                st.image('confusion_matrix_leave_one_out.png', use_column_width=True)
+                st.image('confusion_matrix_leave_one_out.png', use_container_width=True)
             except:
                 st.error("Leave-one-out confusion matrix image not found")
             
@@ -714,7 +703,7 @@ def show_results_page():
         # Display comparison plot if available
         try:
             st.subheader("📊 Cross-Validation Comparison")
-            st.image('cross_validation_comparison.png', use_column_width=True)
+            st.image('cross_validation_comparison.png', use_container_width=True)
         except:
             st.info("Comparison plot not available")
         
